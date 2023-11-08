@@ -70,10 +70,18 @@ async fn sign_in(sign_in_args: SignIn) -> CommandExit {
                 Ok(_) => CommandExit::Success(String::from("Sign in successful")),
                 Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
             };
-        }
+        },
         StatusCode::BAD_REQUEST => {
             return match res.json::<SignInBadRequest>().await {
-                Ok(json) => CommandExit::Success(String::from(json.message)),
+                Ok(json) => CommandExit::Error(String::from(json.message)),
+                Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
+            };
+        },
+        StatusCode::SERVICE_UNAVAILABLE => {
+            return match res.json::<SignInBadRequest>().await {
+                Ok(_) => CommandExit::Success(String::from(
+                    "You have reached the authentication limits, please try in a few minutes!",
+                )),
                 Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
             };
         }
