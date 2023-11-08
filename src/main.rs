@@ -10,6 +10,7 @@ fn main() {
     let result = match cli.command {
         Some(sub_commands) => match sub_commands {
             cli::SubCommands::SignIn(sign_in_args) => cli::auth::sign_in::run(sign_in_args),
+            cli::SubCommands::SignUp(sign_up_args) => cli::auth::sign_up::run(sign_up_args)
         },
         None => {
             unreachable!()
@@ -24,7 +25,7 @@ fn result_exit(result: CommandExit) {
         CommandExit::Normal(message) => println!("{}", message),
         CommandExit::Success(message) => println!("{}", message.green()),
         CommandExit::Error(message) => {
-            println!("{}", format!("Error: {}", message.red()));
+            println!("{}", format!("Error: {}", message).red());
             exit(1);
         }
     }
