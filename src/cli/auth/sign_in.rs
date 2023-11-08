@@ -4,10 +4,9 @@ use regex::Regex;
 use reqwest::StatusCode;
 use rpassword::{self, read_password};
 use serde::Deserialize;
-use std::{collections::HashMap, process::exit};
-
-const EMAIL_VERIFICATION: &str =
-    r"^[a-zA-Z0-9+_%-+.]{1,256}@[a-zA-Z0-9][a-zA-Z0-9-]{0,64}(.[a-zA-Z0-9][a-zA-Z0-9-]{0,25})+$";
+use std::collections::HashMap;
+use crate::cli::{command_exit::CommandExit, spinner::PendulumsSpinner};
+use super::EMAIL_VERIFICATION;
 
 #[derive(Debug, Parser)]
 #[command(author = "Armin Ghoreishi", version, about, long_about = None)]
@@ -19,79 +18,67 @@ pub struct SignIn {
     password: Option<String>,
 }
 
-pub fn run(mut sign_in_args: SignIn) {
+pub fn run(mut sign_in_args: SignIn) -> CommandExit {
     let email_regex = Regex::new(EMAIL_VERIFICATION).unwrap();
 
     if !email_regex.is_match(&sign_in_args.email) {
-        panic!("Email format is not correct!");
+        return CommandExit::Error(String::from("Email format is not correct!"));
     }
 
     if sign_in_args.password.is_none() {
         println!("Type your password");
         match read_password() {
             Ok(pass) => sign_in_args.password = Some(pass),
-            Err(_) => {
-                panic!("Test")
-            }
+            Err(_) => {}
         }
     }
 
     if sign_in_args.password.clone().unwrap().len() < 6
         || sign_in_args.password.clone().unwrap().len() > 32
     {
-        panic!("Password length must be between 6 and 32 characters")
+        return CommandExit::Error(String::from(
+            "Password length must be between 6 and 32 characters!",
+        ));
     }
-    match sign_in(sign_in_args) {
-        Ok(_) => {
-            println!("Signin successful")
-        }
-        Err(_) => {
-            exit(1);
-        }
-    };
+    return sign_in(sign_in_args);
 }
 
 #[tokio::main]
-async fn sign_in(sign_in_args: SignIn) -> Result<(), reqwest::Error> {
+async fn sign_in(sign_in_args: SignIn) -> CommandExit {
     let mut sign_in = HashMap::new();
     sign_in.insert("email", sign_in_args.email);
     sign_in.insert("password", sign_in_args.password.clone().unwrap());
 
     let http_client = reqwest::Client::new();
 
-    let res = match http_client
+    let mut sp = PendulumsSpinner::start();
+    let result = http_client
         .post("https://app.pendulums.io/api/auth/signin")
         .json(&sign_in)
         .send()
-        .await
-    {
-        Ok(res) => res,
-        Err(_e) => {
-            panic!("No internet connection")
-        }
-    };
-    println!("{}", res.status());
+        .await;
+    sp.stop();
+
+    if result.is_err() {
+        return CommandExit::Error(String::from("No internet connection!"));
+    }
+
+    let res = result.unwrap();
     match res.status() {
         StatusCode::OK => {
-            match res.text().await {
-                Ok(_) => {}
-                Err(_e) => {
-                    println!("{}", _e);
-                    panic!("Failed to login")
-                }
+            return match res.text().await {
+                Ok(_) => CommandExit::Success(String::from("Sign in successful")),
+                Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
             };
         }
         StatusCode::BAD_REQUEST => {
-            match res.json::<SignInBadRequest>().await {
-                Ok(json) => panic!("{}", json.message),
-                Err(_e) => {
-                    panic!("Failed to login")
-                }
+            return match res.json::<SignInBadRequest>().await {
+                Ok(json) => CommandExit::Success(String::from(json.message)),
+                Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
             };
         }
-        _ => panic!("Failed to login"),
+        _ => CommandExit::Error(String::from("Failed to sign in")),
     }
-    Ok(())
 }
 
 #[derive(Deserialize)]

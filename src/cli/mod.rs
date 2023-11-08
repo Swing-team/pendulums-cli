@@ -1,6 +1,8 @@
 use clap::{Parser, Subcommand};
 
 pub mod auth;
+pub mod spinner;
+pub mod command_exit;
 use auth::sign_in::SignIn;
 
 #[derive(Debug, Parser)]
