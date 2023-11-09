@@ -77,7 +77,7 @@ async fn sign_up(sign_up_args: SignUp) -> CommandExit {
             };
         }
         StatusCode::SERVICE_UNAVAILABLE => {
-            return match res.json::<SignUpBadRequest>().await {
+            return match res.text().await {
                 Ok(_) => CommandExit::Success(String::from(
                     "You have reached the authentication limits, please try in a few minutes!",
                 )),
