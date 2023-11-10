@@ -1,12 +1,11 @@
+use super::EMAIL_VERIFICATION;
+use crate::cli::{command_exit::CommandExit, spinner::PendulumsSpinner};
 use clap::Parser;
-
 use regex::Regex;
 use reqwest::StatusCode;
 use rpassword::{self, read_password};
 use serde::Deserialize;
 use std::collections::HashMap;
-use crate::cli::{command_exit::CommandExit, spinner::PendulumsSpinner};
-use super::EMAIL_VERIFICATION;
 
 #[derive(Debug, Parser)]
 #[command(author = "Armin Ghoreishi", version, about, long_about = None)]
@@ -49,7 +48,14 @@ async fn sign_in(sign_in_args: SignIn) -> CommandExit {
     sign_in.insert("email", sign_in_args.email);
     sign_in.insert("password", sign_in_args.password.clone().unwrap());
 
-    let http_client = reqwest::Client::new();
+    let cookie_store =
+        reqwest_cookie_store::CookieStoreMutex::new(reqwest_cookie_store::CookieStore::new(None));
+    let cookie_store = std::sync::Arc::new(cookie_store);
+
+    let http_client = reqwest::Client::builder()
+        .cookie_provider(cookie_store.clone())
+        .build()
+        .unwrap();
 
     let mut sp = PendulumsSpinner::start();
     let result = http_client
@@ -67,16 +73,24 @@ async fn sign_in(sign_in_args: SignIn) -> CommandExit {
     match res.status() {
         StatusCode::OK => {
             return match res.text().await {
-                Ok(_) => CommandExit::Success(String::from("Sign in successful")),
+                Ok(_) => {
+                    // Write store back to disk
+                    let mut writer = std::fs::File::create("cookies.json")
+                        .map(std::io::BufWriter::new)
+                        .unwrap();
+                    let store = cookie_store.lock().unwrap();
+                    store.save_json(&mut writer).unwrap();
+                    CommandExit::Success(String::from("Sign in successful"))
+                }
                 Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
             };
-        },
+        }
         StatusCode::BAD_REQUEST => {
             return match res.json::<SignInBadRequest>().await {
                 Ok(json) => CommandExit::Error(String::from(json.message)),
                 Err(_e) => CommandExit::Error(String::from("Failed to sign in")),
             };
-        },
+        }
         StatusCode::SERVICE_UNAVAILABLE => {
             return match res.text().await {
                 Ok(_) => CommandExit::Success(String::from(
