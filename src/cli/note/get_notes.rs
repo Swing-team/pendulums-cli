@@ -20,7 +20,7 @@ struct Note {
     #[serde(alias = "isArchived")]
     is_archived: Option<bool>,
     owner: String,
-    project: String,
+    project: Option<String>,
 }
 
 pub fn run() -> CommandExit {
