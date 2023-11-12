@@ -26,7 +26,7 @@ pub enum SubCommands {
   #[command(name = "signup")]
   SignUp(SignUp),
 
-  /// Gets all notes
-  #[command(name = "note")]
-  Note,
+    /// Gets all notes
+    #[command(name = "notes")]
+    Note,
 }

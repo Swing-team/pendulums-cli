@@ -9,19 +9,19 @@ use crate::cli::http_helper::HttpHelper;
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 struct Note {
-  #[serde(alias = "createdAt", with = "chrono::serde::ts_milliseconds")]
-  created_at: DateTime<Utc>,
-  #[serde(alias = "updatedAt")]
-  updated_at: u64,
-  id: String,
-  title: String,
-  content: String,
-  #[serde(alias = "colorPalette")]
-  color_palette: u8,
-  #[serde(alias = "isArchived")]
-  is_archived: Option<bool>,
-  owner: String,
-  project: String,
+    #[serde(alias = "createdAt", with = "chrono::serde::ts_milliseconds")]
+    created_at: DateTime<Utc>,
+    #[serde(alias = "updatedAt")]
+    updated_at: u64,
+    id: String,
+    title: String,
+    content: String,
+    #[serde(alias = "colorPalette")]
+    color_palette: u8,
+    #[serde(alias = "isArchived")]
+    is_archived: Option<bool>,
+    owner: String,
+    project: Option<String>,
 }
 
 pub fn run() -> CommandExit {
