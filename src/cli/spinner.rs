@@ -13,6 +13,7 @@ impl PendulumsSpinner {
 
   pub fn stop(&mut self) {
     self.sp.stop();
+    // Remove spinner from terminal
     print!("\x1b[2K\r")
   }
 }

@@ -2,7 +2,7 @@ use crate::cli::command_exit::CommandExit;
 use crate::cli::spinner::PendulumsSpinner;
 use reqwest::{Client, RequestBuilder, Response, StatusCode};
 use reqwest_cookie_store::CookieStoreMutex;
-use std::fs::{create_dir_all, File};
+use std::fs::{create_dir_all, remove_file, File};
 use std::io::BufReader;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -48,7 +48,7 @@ impl HttpHelper {
   }
 
   pub fn store_auth_cookie(&self) {
-    let mut writer = std::fs::File::create(&self.cookie_path)
+    let mut writer = File::create(&self.cookie_path)
       .map(std::io::BufWriter::new)
       .unwrap();
     self
@@ -57,6 +57,10 @@ impl HttpHelper {
       .unwrap()
       .save_json(&mut writer)
       .unwrap();
+  }
+
+  pub fn remove_auth_cookie(&self) -> Result<(), std::io::Error> {
+    return remove_file(&self.cookie_path);
   }
 
   pub async fn request(&self, request: RequestBuilder) -> Result<Response, CommandExit> {
