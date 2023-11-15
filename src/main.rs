@@ -12,6 +12,14 @@ fn main() {
       cli::SubCommands::SignIn(sign_in_args) => cli::auth::sign_in::run(sign_in_args),
       cli::SubCommands::SignUp(sign_up_args) => cli::auth::sign_up::run(sign_up_args),
       cli::SubCommands::Note => cli::note::get_notes::run(),
+      cli::SubCommands::Project(command) => match command.sub_command {
+        Some(command) => {
+          match command {
+            cli::project::ProjectSubCommands::Create(create_project_args) => cli::project::create_project::run(create_project_args),
+          }
+        },
+        None => { unreachable!() }
+      },
     },
     None => {
       unreachable!()
