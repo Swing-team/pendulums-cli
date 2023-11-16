@@ -16,6 +16,7 @@ fn main() {
         Some(command) => {
           match command {
             cli::project::ProjectSubCommands::Create(create_project_args) => cli::project::create_project::run(create_project_args),
+            cli::project::ProjectSubCommands::List => cli::project::list_projects::run(),
           }
         },
         None => { unreachable!() }
