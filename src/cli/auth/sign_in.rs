@@ -1,5 +1,5 @@
 use super::EMAIL_VERIFICATION;
-use crate::cli::command_exit::CommandExit;
+use crate::cli::{command_exit::CommandExit, API_URL};
 use crate::cli::http_helper::HttpHelper;
 use clap::Parser;
 use regex::Regex;
@@ -53,7 +53,7 @@ async fn sign_in(sign_in_args: SignIn) -> CommandExit {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .post("https://app.pendulums.io/api/auth/signin")
+    .post(API_URL.to_owned() + "/auth/signin")
     .json(&sign_in);
 
   let res = http_helper.request(request).await;

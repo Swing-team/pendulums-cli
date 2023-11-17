@@ -14,13 +14,25 @@ fn main() {
       cli::SubCommands::SignUp(sign_up_args) => cli::auth::sign_up::run(sign_up_args),
       cli::SubCommands::Note => cli::note::get_notes::run(),
       cli::SubCommands::Project(command) => match command.sub_command {
-        Some(command) => {
-          match command {
-            cli::project::ProjectSubCommands::Create(create_project_args) => cli::project::create_project::run(create_project_args),
-            cli::project::ProjectSubCommands::List => cli::project::list_projects::run(),
+        Some(command) => match command {
+          cli::project::ProjectSubCommands::Create(create_project_args) => {
+            cli::project::create_project::run(create_project_args)
+          }
+          cli::project::ProjectSubCommands::List => cli::project::list_projects::run(),
+        },
+        None => {
+          unreachable!()
+        }
+      },
+      cli::SubCommands::Activity(command) => match command.sub_command {
+        Some(command) => match command {
+          cli::activity::ActivitySubCommands::Start(start_activity_args) => {
+            cli::activity::start_activity::run(start_activity_args)
           }
         },
-        None => { unreachable!() }
+        None => {
+          unreachable!()
+        }
       },
     },
     None => {

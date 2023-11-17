@@ -1,15 +1,19 @@
 use clap::{Parser, Subcommand};
 
+pub mod activity;
 pub mod auth;
 pub mod command_exit;
 mod http_helper;
 pub mod note;
-pub mod spinner;
 pub mod project;
+pub mod spinner;
 
+use activity::ActivityCommand;
 use auth::sign_in::SignIn;
 use auth::sign_up::SignUp;
 use project::ProjectCommand;
+
+pub const API_URL: &str = "http://localhost:1337";
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, arg_required_else_help = true)]
@@ -38,4 +42,8 @@ pub enum SubCommands {
   /// Project sub command
   #[command(name = "project")]
   Project(ProjectCommand),
+
+  /// Activity sub command
+  #[command(name = "activity")]
+  Activity(ActivityCommand),
 }
