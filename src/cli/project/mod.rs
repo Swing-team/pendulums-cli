@@ -1,6 +1,8 @@
 pub mod create_project;
 pub mod list_projects;
 
+use std::fmt;
+
 use clap::{Parser, Subcommand};
 use create_project::CreateProjectArgs;
 use serde::Deserialize;
@@ -26,19 +28,19 @@ pub enum ProjectSubCommands {
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 struct Summary {
-  user: UserSummary
+  user: UserSummary,
 }
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 struct UserSummary {
-  projects: Vec<Project>
+  projects: Vec<Project>,
 }
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct Project {
-  id: Option<String>,
+  pub id: Option<String>,
   name: String,
   #[serde(alias = "invitedUsers")]
   invited_users: Vec<InvitedUser>,
@@ -49,7 +51,13 @@ pub struct Project {
   #[serde(alias = "recentActivityName")]
   recent_activity_name: Option<String>,
   #[serde(alias = "colorPalette")]
-  color_palette: u8
+  color_palette: u8,
+}
+
+impl fmt::Display for Project {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.name)
+  }
 }
 
 #[derive(Debug, Deserialize)]
@@ -57,7 +65,7 @@ pub struct Project {
 pub struct TeamMember {
   id: Option<String>,
   email: String,
-  name: Option<String>
+  name: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -66,5 +74,5 @@ pub struct InvitedUser {
   id: Option<String>,
   email: String,
   name: Option<String>,
-  role: String
+  role: String,
 }

@@ -75,9 +75,12 @@ impl HttpHelper {
     let res = result.unwrap();
     return match res.status() {
       StatusCode::SERVICE_UNAVAILABLE => match res.text().await {
-        Ok(_) => Err(CommandExit::Error(String::from(
-          "You have reached the authentication limits, please try in a few minutes!",
-        ))),
+        Ok(e) => {
+          println!("{:?}", e);
+          Err(CommandExit::Error(String::from(
+            "You have reached the authentication limits, please try in a few minutes!",
+          )))
+        },
         Err(_e) => Err(CommandExit::Error(String::from("Failed to sign in"))),
       },
       StatusCode::FORBIDDEN => match res.text().await {

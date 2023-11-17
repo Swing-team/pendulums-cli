@@ -3,6 +3,7 @@ use colored::Colorize;
 use reqwest::StatusCode;
 use serde::Deserialize;
 
+use crate::cli::API_URL;
 use crate::cli::command_exit::CommandExit;
 use crate::cli::http_helper::HttpHelper;
 
@@ -33,7 +34,7 @@ async fn get_notes() -> CommandExit {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .get("https://app.pendulums.io/api/notes/getall");
+    .get(API_URL.to_owned() + "/notes/getall");
 
   let res = http_helper.request(request).await;
   match res {

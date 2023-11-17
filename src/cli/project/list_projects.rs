@@ -1,7 +1,7 @@
 use colored::Colorize;
 use reqwest::StatusCode;
 
-use crate::cli::command_exit::CommandExit;
+use crate::cli::{command_exit::CommandExit, API_URL};
 use crate::cli::http_helper::HttpHelper;
 
 use super::{Project, Summary};
@@ -56,7 +56,7 @@ pub async fn list_projects() -> Result<Vec<Project>, CommandExit> {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .get("https://app.pendulums.io/api/user/summary");
+    .get(API_URL.to_owned() + "/user/summary");
 
   let res = http_helper.request(request).await;
   match res {
