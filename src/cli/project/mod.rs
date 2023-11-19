@@ -5,6 +5,8 @@ use clap::{Parser, Subcommand};
 use create_project::CreateProjectArgs;
 use serde::Deserialize;
 
+use self::list_projects::ListProjectsArgs;
+
 #[derive(Debug, Parser)]
 #[command(author, version, about, arg_required_else_help = true)]
 pub struct ProjectCommand {
@@ -20,19 +22,7 @@ pub enum ProjectSubCommands {
 
   /// List projects
   #[command(name = "list")]
-  List,
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct Summary {
-  user: UserSummary
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct UserSummary {
-  projects: Vec<Project>
+  List(ListProjectsArgs),
 }
 
 #[derive(Debug, Deserialize)]
