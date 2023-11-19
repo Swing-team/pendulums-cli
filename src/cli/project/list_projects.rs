@@ -5,7 +5,7 @@ use reqwest::StatusCode;
 use crate::cli::command_exit::CommandExit;
 use crate::cli::http_helper::HttpHelper;
 
-use super::{Project, Summary};
+use super::Project;
 
 #[derive(Debug, Parser)]
 #[command(author = "Mohammad Rafigh", version, about, long_about = None)]
@@ -107,14 +107,14 @@ pub async fn list_projects() -> Result<Vec<Project>, CommandExit> {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .get("https://app.pendulums.io/api/user/summary");
+    .get("https://app.pendulums.io/api/projects");
 
   let res = http_helper.request(request).await;
   match res {
     Ok(res) => match res.status() {
       StatusCode::OK => {
-        return match res.json::<Summary>().await {
-          Ok(summary) => Ok(summary.user.projects),
+        return match res.json::<Vec<Project>>().await {
+          Ok(projects) => Ok(projects),
           Err(_e) => {
             println!("error is: {}", _e);
             Err(CommandExit::Error(String::from(

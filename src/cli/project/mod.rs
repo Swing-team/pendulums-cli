@@ -27,18 +27,6 @@ pub enum ProjectSubCommands {
 
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
-struct Summary {
-  user: UserSummary
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
-struct UserSummary {
-  projects: Vec<Project>
-}
-
-#[derive(Debug, Deserialize)]
-#[allow(dead_code)]
 pub struct Project {
   id: Option<String>,
   name: String,
