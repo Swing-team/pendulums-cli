@@ -41,7 +41,7 @@ struct UserSummary {
 #[allow(dead_code)]
 pub struct Project {
   pub id: Option<String>,
-  name: String,
+  pub name: String,
   #[serde(alias = "invitedUsers")]
   invited_users: Vec<InvitedUser>,
   owner: TeamMember,

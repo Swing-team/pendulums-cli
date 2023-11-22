@@ -29,6 +29,9 @@ fn main() {
           cli::activity::ActivitySubCommands::Start(start_activity_args) => {
             cli::activity::start_activity::run(start_activity_args)
           }
+          cli::activity::ActivitySubCommands::GetCurrentActivity => {
+            cli::activity::get_current_activity::run()
+          }
         },
         None => {
           unreachable!()

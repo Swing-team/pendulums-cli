@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, Local};
 use colored::Colorize;
 use reqwest::StatusCode;
 use serde::Deserialize;
@@ -52,7 +52,7 @@ async fn get_notes() -> CommandExit {
               result_string.push_str(&format!(
                 "{}: {}\n",
                 "Created at".yellow(),
-                note.created_at.format("%Y-%m-%d")
+                note.created_at.with_timezone(&Local).format("%Y-%m-%d")
               ));
               result_string.push_str(&format!("{}", note.content));
               result_string.push_str(&format!("\n"));
