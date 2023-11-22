@@ -32,11 +32,12 @@ pub enum SubCommands {
   #[command(name = "signup")]
   SignUp(SignUp),
 
-  /// Sign up sub command
+  /// Sign out sub command
   #[command(name = "signout")]
   SignOut,
 
   /// Gets all notes
+  #[command(name = "notes")]
   Note,
 
   /// Project sub command
