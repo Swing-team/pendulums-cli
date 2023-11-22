@@ -1,4 +1,5 @@
 pub mod start_activity;
+pub mod get_current_activity;
 
 use clap::{Parser, Subcommand};
 use start_activity::StartActivityArgs;
@@ -15,4 +16,8 @@ pub enum ActivitySubCommands {
   /// Create a new project
   #[command(name = "start")]
   Start(StartActivityArgs),
+
+  /// Create a new project
+  #[command(name = "current")]
+  GetCurrentActivity,
 }
