@@ -4,8 +4,7 @@ use inquire::{InquireError, Select};
 use reqwest::StatusCode;
 use serde::Serialize;
 
-use crate::cli::API_URL;
-use crate::cli::command_exit::CommandExit;
+use crate::cli::{command_exit::CommandExit, get_environment};
 use crate::cli::http_helper::HttpHelper;
 use crate::cli::project::list_projects::list_projects;
 use crate::cli::project::Project;
@@ -79,7 +78,7 @@ async fn start_activity(project_id: String, activity_name: String) -> CommandExi
   let request = http_helper
     .http_client
     .post(
-      String::from(API_URL.to_owned() + "/projects/")
+      String::from(get_environment().api_url + "/projects/")
         + activity_dto.activity.project.as_str()
         + "/activities",
     )

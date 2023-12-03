@@ -3,8 +3,7 @@ use colored::Colorize;
 use reqwest::StatusCode;
 use serde::Deserialize;
 
-use crate::cli::API_URL;
-use crate::cli::command_exit::CommandExit;
+use crate::cli::{command_exit::CommandExit, get_environment};
 use crate::cli::http_helper::HttpHelper;
 
 #[derive(Debug, Deserialize)]
@@ -34,7 +33,7 @@ async fn get_notes() -> CommandExit {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .get(API_URL.to_owned() + "/notes/getall");
+    .get(get_environment().api_url + "/notes/getall");
 
   let res = http_helper.request(request).await;
   match res {

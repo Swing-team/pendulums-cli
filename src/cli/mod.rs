@@ -13,7 +13,15 @@ use auth::sign_in::SignIn;
 use auth::sign_up::SignUp;
 use project::ProjectCommand;
 
-pub const API_URL: &str = "http://localhost:1337";
+pub struct CLIEnvironment {
+  pub api_url: String,
+}
+
+pub fn get_environment() -> CLIEnvironment {
+  CLIEnvironment {
+    api_url: option_env!("API_URL").unwrap_or("http://localhost:1337").to_string()
+  }
+}
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, arg_required_else_help = true)]

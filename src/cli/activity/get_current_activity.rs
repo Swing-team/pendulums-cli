@@ -2,7 +2,7 @@ use chrono::{DateTime, Local, Utc};
 use reqwest::StatusCode;
 use serde::Deserialize;
 
-use crate::cli::{command_exit::CommandExit, http_helper::HttpHelper, API_URL};
+use crate::cli::{command_exit::CommandExit, http_helper::HttpHelper, get_environment};
 
 #[derive(Debug, Deserialize)]
 struct CurrentActivity {
@@ -21,7 +21,7 @@ pub fn run() -> CommandExit {
 async fn get_current_activity() -> CommandExit {
   let http_helper = HttpHelper::build();
   let request = http_helper.http_client.get(String::from(
-    API_URL.to_owned() + "/user/activities/current",
+    get_environment().api_url + "/user/activities/current",
   ));
 
   let res = http_helper.request(request).await;

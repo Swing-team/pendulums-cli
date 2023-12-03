@@ -1,5 +1,4 @@
-use crate::cli::API_URL;
-use crate::cli::command_exit::CommandExit;
+use crate::cli::{command_exit::CommandExit, get_environment};
 use crate::cli::http_helper::HttpHelper;
 use reqwest::StatusCode;
 
@@ -12,7 +11,7 @@ async fn sign_out() -> CommandExit {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .get(API_URL.to_owned() + "/auth/signout");
+    .get(get_environment().api_url + "/auth/signout");
 
   let res = http_helper.request(request).await;
   return match res {
