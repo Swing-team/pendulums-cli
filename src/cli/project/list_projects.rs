@@ -2,7 +2,7 @@ use clap::Parser;
 use colored::Colorize;
 use reqwest::StatusCode;
 
-use crate::cli::{command_exit::CommandExit, API_URL};
+use crate::cli::{command_exit::CommandExit, get_environment};
 use crate::cli::http_helper::HttpHelper;
 
 use super::Project;
@@ -107,7 +107,7 @@ pub async fn list_projects() -> Result<Vec<Project>, CommandExit> {
   let http_helper = HttpHelper::build();
   let request = http_helper
     .http_client
-    .get(API_URL.to_owned() + "/projects");
+    .get(get_environment().api_url + "/projects");
 
   let res = http_helper.request(request).await;
   match res {
