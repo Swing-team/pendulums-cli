@@ -2,15 +2,19 @@ use chrono::{DateTime, Local, Utc};
 use reqwest::StatusCode;
 use serde::Deserialize;
 
-use crate::cli::{command_exit::CommandExit, http_helper::HttpHelper, get_environment};
+use crate::cli::{command_exit::CommandExit, get_environment, http_helper::HttpHelper};
 
-#[derive(Debug, Deserialize)]
-struct CurrentActivity {
+#[derive(Debug, Clone, Deserialize)]
+pub struct CurrentActivity {
+  pub id: String,
   #[serde(alias = "projectName")]
   project_name: String,
-  name: String,
+  #[serde(alias = "projectId")]
+  pub project_id: String,
+  pub name: String,
   #[serde(alias = "startedAt")]
-  started_at: String,
+  pub started_at: String,
+  pub user: String
 }
 
 pub fn run() -> CommandExit {
@@ -45,7 +49,7 @@ pub fn run() -> CommandExit {
 }
 
 #[tokio::main]
-async fn get_current_activity() -> Result<CurrentActivity, CommandExit> {
+pub async fn get_current_activity() -> Result<CurrentActivity, CommandExit> {
   let http_helper = HttpHelper::build();
   let request = http_helper.http_client.get(String::from(
     get_environment().api_url + "/user/activities/current",
@@ -57,7 +61,6 @@ async fn get_current_activity() -> Result<CurrentActivity, CommandExit> {
       StatusCode::OK => match res.json::<CurrentActivity>().await {
         Ok(activity) => Ok(activity),
         Err(_e) => {
-          println!("error is: {}", _e);
           Err(CommandExit::Error(String::from(
             "Faild to get current activity!",
           )))
@@ -69,9 +72,19 @@ async fn get_current_activity() -> Result<CurrentActivity, CommandExit> {
           "Faild to get current activity!",
         ))),
       },
-      _ => Err(CommandExit::Error(String::from(
-        "Faild to get current activity!",
-      ))),
+      StatusCode::NOT_FOUND => {
+        match res.text().await {
+          Ok(message) => Err(CommandExit::Error(String::from(message))),
+          Err(_) => Err(CommandExit::Error(String::from(
+            "Faild to get current activity!",
+          ))),
+        }
+      },
+      _ => {
+        Err(CommandExit::Error(String::from(
+          "Faild to get current activity!",
+        )))
+      }
     },
     Err(command_exit) => Err(command_exit),
   }

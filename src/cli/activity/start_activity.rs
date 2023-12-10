@@ -4,10 +4,10 @@ use inquire::{InquireError, Select};
 use reqwest::StatusCode;
 use serde::Serialize;
 
-use crate::cli::{command_exit::CommandExit, get_environment};
 use crate::cli::http_helper::HttpHelper;
 use crate::cli::project::list_projects::list_projects;
 use crate::cli::project::Project;
+use crate::cli::{command_exit::CommandExit, get_environment};
 
 #[derive(Debug, Parser)]
 #[command(author = "Armin Ghoreishi", version, about, long_about = None)]
@@ -88,19 +88,17 @@ async fn start_activity(project_id: String, activity_name: String) -> CommandExi
   match res {
     Ok(res) => match res.status() {
       StatusCode::OK => match res.text().await {
-        Ok(_) => {
-          CommandExit::Success(String::from("Activity started"))
-        }
+        Ok(_) => CommandExit::Success(String::from("Activity started")),
         Err(_e) => {
           println!("error is: {}", _e);
-          CommandExit::Error(String::from("Faild to start new activity!"))
+          CommandExit::Error(String::from("Failed to start new activity!"))
         }
       },
       StatusCode::BAD_REQUEST => match res.text().await {
         Ok(message) => CommandExit::Error(String::from(message)),
-        Err(_) => CommandExit::Error(String::from("Faild to start new activity!")),
+        Err(_) => CommandExit::Error(String::from("Failed to start new activity!")),
       },
-      _ => CommandExit::Error(String::from("Faild to start new activity!")),
+      _ => CommandExit::Error(String::from("Failed to start new activity!")),
     },
     Err(command_exit) => command_exit,
   }
