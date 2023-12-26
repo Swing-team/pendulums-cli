@@ -1,5 +1,7 @@
 use clap::Parser;
-use cli::{command_exit::CommandExit, Cli};
+use cli::{
+  activity::update_current_activity::UpdateCurrentActivityArgs, command_exit::CommandExit, Cli,
+};
 use colored::Colorize;
 use std::process::exit;
 mod cli;
@@ -28,17 +30,25 @@ fn main() {
       },
       cli::SubCommands::Activity(command) => match command.sub_command {
         Some(command) => match command {
+          cli::activity::ActivitySubCommands::Status => cli::activity::get_current_activity::run(),
           cli::activity::ActivitySubCommands::Start(start_activity_args) => {
             cli::activity::start_activity::run(start_activity_args)
           }
-          cli::activity::ActivitySubCommands::CurrentActivity(current_activity_sub_command) => {
-            match current_activity_sub_command {
-              cli::activity::CurrentActivitySubCommands::Status => {
-                cli::activity::get_current_activity::run()
+          cli::activity::ActivitySubCommands::Update(update_activity_args) => {
+            println!("{:?}", update_activity_args);
+            if update_activity_args.current {
+              // Update current activity
+              if update_activity_args.name.is_empty() {
+                CommandExit::Error(String::from("Please provide new activity name!"))
+              } else {
+                cli::activity::update_current_activity::run(UpdateCurrentActivityArgs {
+                  name: update_activity_args.name,
+                })
               }
-              cli::activity::CurrentActivitySubCommands::Update(update_current_activity_args) => {
-                cli::activity::update_current_activity::run(update_current_activity_args)
-              }
+            } else {
+              // Update an old activity
+              //TODO: update an old activity based on its id
+              CommandExit::Error(String::from(""))
             }
           }
           cli::activity::ActivitySubCommands::StopCurrentActivity => {

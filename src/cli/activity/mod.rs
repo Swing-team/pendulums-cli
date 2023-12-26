@@ -3,11 +3,12 @@ pub mod update_current_activity;
 pub mod start_activity;
 pub mod stop_current_activity;
 pub mod activity_helper;
+pub mod update_activity;
 
 use clap::{Parser, Subcommand};
 use start_activity::StartActivityArgs;
 
-use self::update_current_activity::UpdateCurrentActivityArgs;
+use self::update_activity::UpdateActivityArgs;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -23,25 +24,18 @@ pub struct ActivityCommand {
 
 #[derive(Debug, Subcommand)]
 pub enum ActivitySubCommands {
-  /// Start new activity
-  #[command(name = "start")]
-  Start(StartActivityArgs),
-
-  /// Current activity subcommands
-  #[command(subcommand, name="current")]
-  CurrentActivity(CurrentActivitySubCommands),
-
-  #[command(name = "stop")]
-  StopCurrentActivity,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum CurrentActivitySubCommands {
   /// Retrieve the status of current activity
   #[command(name = "status")]
   Status,
 
-  /// Update current activity
+  /// Start new activity
+  #[command(name = "start")]
+  Start(StartActivityArgs),
+
+  /// Update an activity
   #[command(name = "update")]
-  Update(UpdateCurrentActivityArgs),
+  Update(UpdateActivityArgs),
+
+  #[command(name = "stop")]
+  StopCurrentActivity,
 }
