@@ -1,5 +1,7 @@
 use clap::Parser;
-use cli::{command_exit::CommandExit, Cli};
+use cli::{
+  activity::update_current_activity::UpdateCurrentActivityArgs, command_exit::CommandExit, Cli,
+};
 use colored::Colorize;
 use std::process::exit;
 mod cli;
@@ -14,10 +16,12 @@ fn main() {
       cli::SubCommands::SignUp(sign_up_args) => cli::auth::sign_up::run(sign_up_args),
       cli::SubCommands::Note => cli::note::get_notes::run(),
       cli::SubCommands::Project(command) => match command.sub_command {
-        Some(command) => {
-          match command {
-            cli::project::ProjectSubCommands::Create(create_project_args) => cli::project::create_project::run(create_project_args),
-            cli::project::ProjectSubCommands::List(list_projects_args) => cli::project::list_projects::run(list_projects_args),
+        Some(command) => match command {
+          cli::project::ProjectSubCommands::Create(create_project_args) => {
+            cli::project::create_project::run(create_project_args)
+          }
+          cli::project::ProjectSubCommands::List(list_projects_args) => {
+            cli::project::list_projects::run(list_projects_args)
           }
         },
         None => {
@@ -26,12 +30,27 @@ fn main() {
       },
       cli::SubCommands::Activity(command) => match command.sub_command {
         Some(command) => match command {
+          cli::activity::ActivitySubCommands::Status => cli::activity::get_current_activity::run(),
           cli::activity::ActivitySubCommands::Start(start_activity_args) => {
             cli::activity::start_activity::run(start_activity_args)
-          },
-          cli::activity::ActivitySubCommands::GetCurrentActivity => {
-            cli::activity::get_current_activity::run()
-          },
+          }
+          cli::activity::ActivitySubCommands::Update(update_activity_args) => {
+            println!("{:?}", update_activity_args);
+            if update_activity_args.current {
+              // Update current activity
+              if update_activity_args.name.is_empty() {
+                CommandExit::Error(String::from("Please provide new activity name!"))
+              } else {
+                cli::activity::update_current_activity::run(UpdateCurrentActivityArgs {
+                  name: update_activity_args.name,
+                })
+              }
+            } else {
+              // Update an old activity
+              //TODO: update an old activity based on its id
+              CommandExit::Error(String::from(""))
+            }
+          }
           cli::activity::ActivitySubCommands::StopCurrentActivity => {
             cli::activity::stop_current_activity::run()
           }
