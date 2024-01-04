@@ -35,7 +35,6 @@ fn main() {
             cli::activity::start_activity::run(start_activity_args)
           }
           cli::activity::ActivitySubCommands::Update(update_activity_args) => {
-            println!("{:?}", update_activity_args);
             if update_activity_args.current {
               // Update current activity
               if update_activity_args.name.is_empty() {
@@ -53,6 +52,9 @@ fn main() {
           }
           cli::activity::ActivitySubCommands::StopCurrentActivity => {
             cli::activity::stop_current_activity::run()
+          }
+          cli::activity::ActivitySubCommands::DeleteActivity(delete_activity_args) => {
+            cli::activity::delete_activity::run(delete_activity_args)
           }
         },
         None => {

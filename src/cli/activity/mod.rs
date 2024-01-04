@@ -4,11 +4,13 @@ pub mod start_activity;
 pub mod stop_current_activity;
 pub mod activity_helper;
 pub mod update_activity;
+pub mod delete_activity;
 
 use clap::{Parser, Subcommand};
 use start_activity::StartActivityArgs;
 
 use self::update_activity::UpdateActivityArgs;
+use self::delete_activity::DeleteActivityArgs;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -38,4 +40,7 @@ pub enum ActivitySubCommands {
 
   #[command(name = "stop")]
   StopCurrentActivity,
+
+  #[command(name = "delete")]
+  DeleteActivity(DeleteActivityArgs)
 }
