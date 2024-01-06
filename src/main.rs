@@ -56,6 +56,9 @@ fn main() {
           cli::activity::ActivitySubCommands::DeleteActivity(delete_activity_args) => {
             cli::activity::delete_activity::run(delete_activity_args)
           }
+          cli::activity::ActivitySubCommands::LogActivities => {
+            cli::activity::get_activities_log::run()
+          }
         },
         None => {
           unreachable!()

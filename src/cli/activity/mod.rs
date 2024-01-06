@@ -5,6 +5,7 @@ pub mod stop_current_activity;
 pub mod activity_helper;
 pub mod update_activity;
 pub mod delete_activity;
+pub mod get_activities_log;
 
 use clap::{Parser, Subcommand};
 use start_activity::StartActivityArgs;
@@ -42,5 +43,8 @@ pub enum ActivitySubCommands {
   StopCurrentActivity,
 
   #[command(name = "delete")]
-  DeleteActivity(DeleteActivityArgs)
+  DeleteActivity(DeleteActivityArgs),
+
+  #[command(name = "log")]
+  LogActivities
 }
