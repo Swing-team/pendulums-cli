@@ -36,7 +36,7 @@ pub struct Project {
   invited_users: Vec<InvitedUser>,
   owner: TeamMember,
   #[serde(alias = "teamMembers")]
-  team_members: Vec<TeamMember>,
+  pub team_members: Vec<TeamMember>,
   admins: Vec<TeamMember>,
   #[serde(alias = "recentActivityName")]
   recent_activity_name: Option<String>,
@@ -53,7 +53,7 @@ impl fmt::Display for Project {
 #[derive(Debug, Deserialize)]
 #[allow(dead_code)]
 pub struct TeamMember {
-  id: Option<String>,
+  pub id: Option<String>,
   email: String,
   name: Option<String>,
 }

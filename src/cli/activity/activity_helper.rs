@@ -2,7 +2,7 @@ use chrono::{DateTime, Local, Utc};
 
 use crate::cli::command_exit::CommandExit;
 
-use super::{get_current_activity::CurrentActivity, get_activities_log::Activity};
+use super::{get_activities_log::Activity, get_current_activity::CurrentActivity};
 
 pub fn print_current_activity(activity: CurrentActivity) -> CommandExit {
   let started_at_date =
@@ -31,7 +31,7 @@ pub fn print_current_activity(activity: CurrentActivity) -> CommandExit {
   ))
 }
 
-pub fn print_activities(activities: Vec<Activity>) -> CommandExit {
+pub fn print_activities(activities: Vec<Activity>) {
   println!(
     "{:<30} {:<30} {:<30}",
     "Activity Name", "Started At", "Duration"
@@ -58,5 +58,5 @@ pub fn print_activities(activities: Vec<Activity>) -> CommandExit {
         )
       )
   }
-  CommandExit::Normal(content)
+  println!("{}", content)
 }

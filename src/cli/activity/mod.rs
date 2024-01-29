@@ -10,6 +10,7 @@ pub mod get_activities_log;
 use clap::{Parser, Subcommand};
 use start_activity::StartActivityArgs;
 
+use self::get_activities_log::LogActivitiesArgs;
 use self::update_activity::UpdateActivityArgs;
 use self::delete_activity::DeleteActivityArgs;
 
@@ -46,5 +47,5 @@ pub enum ActivitySubCommands {
   DeleteActivity(DeleteActivityArgs),
 
   #[command(name = "log")]
-  LogActivities
+  LogActivities(LogActivitiesArgs)
 }

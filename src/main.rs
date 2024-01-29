@@ -56,8 +56,8 @@ fn main() {
           cli::activity::ActivitySubCommands::DeleteActivity(delete_activity_args) => {
             cli::activity::delete_activity::run(delete_activity_args)
           }
-          cli::activity::ActivitySubCommands::LogActivities => {
-            cli::activity::get_activities_log::run()
+          cli::activity::ActivitySubCommands::LogActivities(log_activities_args) => {
+            cli::activity::get_activities_log::run(log_activities_args)
           }
         },
         None => {
